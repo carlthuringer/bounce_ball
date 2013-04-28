@@ -6,14 +6,14 @@
  var y = 100;
  var dx = 5;
  var dy = 5;
-  
+
  function init(){
    context = myCanvas.getContext('2d');
    setInterval(draw, 10);
  }
 
  function draw(){
-   context.clearRect(0, 0, 300, 300);
+   context.clearRect(0, 0, 800, 400);
    context.beginPath();
    context.fillStyle = "#00ff00";
    // Draw a circle of radius 20 at the coordinates 100, 100 on the canvas
@@ -23,8 +23,8 @@
 
 
    // Fill in the boundary logic
-   if (x < 0 || (x + 20 + dx) >= 300) dx = -dx;
-   if (y < 0 || (y + 20 + dy) >= 300) dy = -dy;
+   if (x < 0 || (x + 20 + dx) >= 800) dx = -dx;
+   if (y < 0 || (y + 20 + dy) >= 400) dy = -dy;
    x += dx;
    y += dy;
  }
@@ -33,10 +33,22 @@
 <html>
  <head>
    <title>Bounce Ball step 1, Javascript and HTML tutorial</title>
+   <style>
+    body{background-color: #666;}
+    canvas {
+      padding-left: 0;
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      width: 800px;
+      background-color: #ccc;
+    }
+  </style>
  </head>
 
  <body onLoad="init();">
-   <canvas id="myCanvas" width="500" height="400">
+   <canvas id="myCanvas" width="800" height="400">
    </canvas>
  </body>
 </html>
