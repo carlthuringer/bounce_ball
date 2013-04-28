@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<script>
+ var context;
+ var x = 100;
+ var y = 100;
+ var dx = 5;
+ var dy = 5;
+  
+ function init(){
+   context = myCanvas.getContext('2d');
+   setInterval(draw, 10);
+ }
+
+ function draw(){
+   context.clearRect(0, 0, 300, 300);
+   context.beginPath();
+   context.fillStyle = "#00ff00";
+   // Draw a circle of radius 20 at the coordinates 100, 100 on the canvas
+   context.arc(x, y, 20, 0, Math.PI*2, true);
+   context.closePath();
+   context.fill();
+
+
+   // Fill in the boundary logic
+   if (x < 0 || (x + 20 + dx) >= 300) dx = -dx;
+   if (y < 0 || (y + 20 + dy) >= 300) dy = -dy;
+   x += dx;
+   y += dy;
+ }
+</script>
+
+<html>
+ <head>
+   <title>Bounce Ball step 1, Javascript and HTML tutorial</title>
+ </head>
+
+ <body onLoad="init();">
+   <canvas id="myCanvas" width="500" height="400">
+   </canvas>
+ </body>
+</html>
