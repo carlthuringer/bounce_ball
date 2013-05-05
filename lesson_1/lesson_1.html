@@ -3,14 +3,14 @@
 <script>
 function init(){
   "use strict";
-  var context = null,
-  ball = {
+  var canvas = document.getElementById('myCanvas');
+  var ball = {
     positionX: 100,
     positionY: 100,
     velocityX: 1,
     velocityY: 1
   },
-  context = myCanvas.getContext('2d');
+  context = canvas.getContext('2d');
   // Drawing runs 60 times per second
   setInterval(draw, 1000 / 60, context, ball);
   // Simulation runs 1000 times per second
@@ -18,6 +18,7 @@ function init(){
 }
 
 function tickSimulation(ball){
+  "use strict";
   // Check whether we're about to hit the edge. If so, bounce by reversing the velocityX
   if (((ball.positionX - 20 + ball.velocityX) < 0) || ((ball.positionX + 20 + ball.velocityX) > 800)) {
     ball.velocityX *= -1;
@@ -33,6 +34,7 @@ function tickSimulation(ball){
 }
 
 function draw(context, ball){
+  "use strict";
   context.clearRect(0, 0, 800, 400);
   context.beginPath();
   context.fillStyle = "#006660";
