@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<script>
+function init(){
+  "use strict";
+  var canvas = document.getElementById('myCanvas');
+  var ball = {
+    positionX: 100,
+    positionY: 100,
+    velocityX: 1,
+    velocityY: 1
+  },
+  context = canvas.getContext('2d');
+  // Drawing runs 60 times per second
+  setInterval(draw, 1000 / 60, context, ball);
+  // Simulation runs 1000 times per second
+  setInterval(tickSimulation, 1, ball);
+}
+
+function tickSimulation(ball){
+  "use strict";
+  // Check whether we're about to hit the edge. If so, bounce by reversing the velocityX
+  if (((ball.positionX - 20 + ball.velocityX) < 0) || ((ball.positionX + 20 + ball.velocityX) > 800)) {
+    ball.velocityX *= -1;
+  }
+
+  if (((ball.positionY - 20 + ball.velocityY) < 0) || ((ball.positionY + 20 + ball.velocityY) > 400)) {
+    ball.velocityY *= -1;
+  }
+
+  // Move by adding the velocityX and velocityY to the positionX and positionY
+  ball.positionX += ball.velocityX;
+  ball.positionY += ball.velocityY;
+}
+
+function draw(context, ball){
+  "use strict";
+  context.clearRect(0, 0, 800, 400);
+  context.beginPath();
+  context.fillStyle = "#006660";
+  // Draw a circle of radius 20 at the coordinates 100, 100 on the canvas
+  context.arc(ball.positionX, ball.positionY, 20, 0, Math.PI*2, true);
+  context.closePath();
+  context.fill();
+}
+
+</script>
+
+<html>
+ <head>
+   <title>Bounce Ball step 1, Javascript and HTML tutorial</title>
+   <style>
+    body{background-color: #666;}
+    canvas {
+      padding-left: 0;
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      background-color: #ccc;
+    }
+  </style>
+ </head>
+
+ <body onLoad="init();">
+   <canvas id="myCanvas" width="800" height="400">
+   </canvas>
+ </body>
+</html>
