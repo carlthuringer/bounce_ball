@@ -1,8 +1,17 @@
-window.onload = init();
-function init() {
+(function() {
   "use strict";
-  var canvas = document.getElementById('canvas'),
-  ball = {
+  var requestAnimationFrame = window.requestAnimationFrame ||
+                              window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame ||
+                              window.msRequestAnimationFrame;
+  window.requestAnimationFrame = requestAnimationFrame;
+})();
+
+function bouncyBallInit() {
+  "use strict";
+  window.BounceBall = {};
+  window.BounceBall.canvas = document.getElementById('canvas');
+  window.BounceBall.ball = {
     x: 50,
     y: 50,
     vx: 2,
@@ -10,15 +19,16 @@ function init() {
     radius: 20,
     color: "#006660"
   };
-  setInterval(drawBall, 1000/60, ball, canvas); //draw 60 frames per second
-  setInterval(tickSimulation, 1, ball, canvas);
+  window.requestAnimationFrame(drawBall);
+  setInterval(tickSimulation, 1);
 }
 
-function tickSimulation(ball, canvas) {
+function tickSimulation() {
   "use strict";
   var gravity = -0.1,
-  bouncyFactor = 0.8;
-
+    bouncyFactor = 0.8,
+    ball = window.BounceBall.ball,
+    canvas = window.BounceBall.canvas;
   // update y axis velocity
   ball.vy -= gravity;
 
@@ -36,9 +46,13 @@ function tickSimulation(ball, canvas) {
   ball.y += ball.vy;
 }
 
-function drawBall(ball, canvas) {
+function drawBall(time) {
   "use strict";
-  var context = canvas.getContext('2d');
+  window.requestAnimationFrame(drawBall);
+  var ball = window.BounceBall.ball,
+    canvas = window.BounceBall.canvas,
+    context = canvas.getContext('2d');
+
   context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
   context.fillStyle = ball.color;
   context.beginPath();
@@ -46,3 +60,20 @@ function drawBall(ball, canvas) {
   context.closePath();
   context.fill();
 }
+
+// Load script when document is done loading:
+// Most of this is here for compatability.
+(function (){
+  "use strict";
+  if(window.addEventListener) {
+  window.addEventListener('load', function load(){
+    window.removeEventListener('load', load);
+    bouncyBallInit(); // This is the important bit.
+  });
+} else if(window.attachEvent) {
+  window.attachEvent('onload', function load(){
+    window.detachEvent('onload', load);
+    bouncyBallInit(); // This is the important bit for Internet Explorer
+  });
+}
+})();

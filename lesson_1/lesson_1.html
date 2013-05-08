@@ -1,69 +1,100 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
-<script>
-function init(){
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type='text/javascript'>
+// We need this to support requestAnimationFrame on all browsers
+(function() {
   "use strict";
-  var canvas = document.getElementById('myCanvas');
-  var ball = {
-    positionX: 100,
-    positionY: 100,
-    velocityX: 1,
-    velocityY: 1
-  },
-  context = canvas.getContext('2d');
-  // Drawing runs 60 times per second
-  setInterval(draw, 1000 / 60, context, ball);
+  var requestAnimationFrame = window.requestAnimationFrame ||
+                              window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame ||
+                              window.msRequestAnimationFrame;
+  window.requestAnimationFrame = requestAnimationFrame;
+})();
+
+function bouncyBallInit(){
+  "use strict";
+  window.BouncyBall = {};
+  window.BouncyBall.canvas = document.getElementById('myCanvas');
+  window.BouncyBall.ball = {
+    x: 100,
+    y: 100,
+    vx: 1,
+    vy: 1,
+    radius: 20,
+    color: "#006660"
+  }; // That's x and y position, velocity x (vx) and velocity y (vy)
+  // Drawing runs at the browser framerate.
+  window.requestAnimationFrame(draw);
   // Simulation runs 1000 times per second
-  setInterval(tickSimulation, 1, ball);
+  setInterval(tickSimulation, 1);
 }
 
-function tickSimulation(ball){
+function tickSimulation(){
   "use strict";
-  // Check whether we're about to hit the edge. If so, bounce by reversing the velocityX
-  if (((ball.positionX - 20 + ball.velocityX) < 0) || ((ball.positionX + 20 + ball.velocityX) > 800)) {
-    ball.velocityX *= -1;
+  var canvas = window.BouncyBall.canvas,
+    ball = window.BouncyBall.ball,
+    canvasWidth = canvas.width,
+    canvasHeight = canvas.height;
+
+  // Check whether we're about to hit the edge. If so, bounce by reversing the vx
+  if (((ball.x - 20 + ball.vx) < 0) || ((ball.x + 20 + ball.vx) > canvasWidth)) {
+    ball.vx *= -1;
   }
 
-  if (((ball.positionY - 20 + ball.velocityY) < 0) || ((ball.positionY + 20 + ball.velocityY) > 400)) {
-    ball.velocityY *= -1;
+  if (((ball.y - 20 + ball.vy) < 0) || ((ball.y + 20 + ball.vy) > canvasHeight)) {
+    ball.vy *= -1;
   }
 
-  // Move by adding the velocityX and velocityY to the positionX and positionY
-  ball.positionX += ball.velocityX;
-  ball.positionY += ball.velocityY;
+  // Move by adding the vx and vy to the x and y
+  ball.x += ball.vx;
+  ball.y += ball.vy;
 }
 
-function draw(context, ball){
+function draw(time){
   "use strict";
+  window.requestAnimationFrame(draw);
+  var context = window.BouncyBall.canvas.getContext('2d'),
+    ball = window.BouncyBall.ball;
   context.clearRect(0, 0, 800, 400);
   context.beginPath();
-  context.fillStyle = "#006660";
+  context.fillStyle = ball.color;
   // Draw a circle of radius 20 at the coordinates 100, 100 on the canvas
-  context.arc(ball.positionX, ball.positionY, 20, 0, Math.PI*2, true);
+  context.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2, true);
   context.closePath();
   context.fill();
 }
 
+// Load script when document is done loading:
+(function (){
+  "use strict";
+  if(window.addEventListener) {
+    window.addEventListener('load', function load(){
+      window.removeEventListener('load', load);
+      bouncyBallInit();
+    });
+  } else if(window.attachEvent) {
+    window.attachEvent('onload', function load(){
+      window.detachEvent('onload', load);
+      bouncyBallInit();
+    });
+  }
+})();
 </script>
-
-<html>
- <head>
-   <title>Bounce Ball step 1, Javascript and HTML tutorial</title>
-   <style>
-    body{background-color: #666;}
-    canvas {
-      padding-left: 0;
-      padding-right: 0;
-      margin-left: auto;
-      margin-right: auto;
-      display: block;
-      background-color: #ccc;
-    }
-  </style>
- </head>
-
- <body onLoad="init();">
-   <canvas id="myCanvas" width="800" height="400">
-   </canvas>
- </body>
+<title>Bounce Ball step 1, Javascript and HTML tutorial</title>
+<style>
+body{background-color: #666;}
+canvas {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  background-color: #ccc;
+}
+</style>
+</head>
+<body>
+<canvas id="myCanvas" width="800" height="400"></canvas>
+</body>
 </html>
