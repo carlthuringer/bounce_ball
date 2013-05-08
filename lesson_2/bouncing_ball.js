@@ -1,5 +1,4 @@
-window.onload = init();
-function init() {
+function bouncyBallInit() {
   "use strict";
   var canvas = document.getElementById('canvas'),
   ball = {
@@ -46,3 +45,20 @@ function drawBall(ball, canvas) {
   context.closePath();
   context.fill();
 }
+
+// Load script when document is done loading:
+// Most of this is here for compatability.
+(function (){
+  "use strict";
+  if(window.addEventListener) {
+  window.addEventListener('load', function load(){
+    window.removeEventListener('load', load);
+    bouncyBallInit(); // This is the important bit.
+  });
+} else if(window.attachEvent) {
+  window.attachEvent('onload', function load(){
+    window.detachEvent('onload', load);
+    bouncyBallInit(); // This is the important bit for Internet Explorer
+  });
+}
+})();
