@@ -2,10 +2,21 @@
 <html>
 <head>
 <script type='text/javascript'>
+// We need this to support requestAnimationFrame on all browsers
+(function() {
+  "use strict";
+  var requestAnimationFrame = window.requestAnimationFrame ||
+                              window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame ||
+                              window.msRequestAnimationFrame;
+  window.requestAnimationFrame = requestAnimationFrame;
+})();
+
 function bouncyBallInit(){
   "use strict";
-  var canvas = document.getElementById('myCanvas'),
-  ball = {
+  window.BouncyBall = {};
+  window.BouncyBall.canvas = document.getElementById('myCanvas');
+  window.BouncyBall.ball = {
     x: 100,
     y: 100,
     vx: 1,
@@ -13,16 +24,18 @@ function bouncyBallInit(){
     radius: 20,
     color: "#006660"
   }; // That's x and y position, velocity x (vx) and velocity y (vy)
-  // Drawing runs 60 times per second
-  setInterval(draw, 1000 / 60, canvas, ball);
+  // Drawing runs at the browser framerate.
+  window.requestAnimationFrame(draw);
   // Simulation runs 1000 times per second
-  setInterval(tickSimulation, 1, canvas, ball);
+  setInterval(tickSimulation, 1);
 }
 
-function tickSimulation(canvas, ball){
+function tickSimulation(){
   "use strict";
-  var canvasWidth = canvas.width,
-  canvasHeight = canvas.height;
+  var canvas = window.BouncyBall.canvas,
+    ball = window.BouncyBall.ball,
+    canvasWidth = canvas.width,
+    canvasHeight = canvas.height;
 
   // Check whether we're about to hit the edge. If so, bounce by reversing the vx
   if (((ball.x - 20 + ball.vx) < 0) || ((ball.x + 20 + ball.vx) > canvasWidth)) {
@@ -38,9 +51,11 @@ function tickSimulation(canvas, ball){
   ball.y += ball.vy;
 }
 
-function draw(canvas, ball){
+function draw(time){
   "use strict";
-  var context = canvas.getContext('2d');
+  window.requestAnimationFrame(draw);
+  var context = window.BouncyBall.canvas.getContext('2d'),
+    ball = window.BouncyBall.ball;
   context.clearRect(0, 0, 800, 400);
   context.beginPath();
   context.fillStyle = ball.color;
@@ -54,16 +69,16 @@ function draw(canvas, ball){
 (function (){
   "use strict";
   if(window.addEventListener) {
-  window.addEventListener('load', function load(){
-    window.removeEventListener('load', load);
-    bouncyBallInit();
-  });
-} else if(window.attachEvent) {
-  window.attachEvent('onload', function load(){
-    window.detachEvent('onload', load);
-    bouncyBallInit();
-  });
-}
+    window.addEventListener('load', function load(){
+      window.removeEventListener('load', load);
+      bouncyBallInit();
+    });
+  } else if(window.attachEvent) {
+    window.attachEvent('onload', function load(){
+      window.detachEvent('onload', load);
+      bouncyBallInit();
+    });
+  }
 })();
 </script>
 <title>Bounce Ball step 1, Javascript and HTML tutorial</title>
