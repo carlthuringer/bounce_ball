@@ -5,30 +5,31 @@
 // We need this to support requestAnimationFrame on all browsers
 (function() {
   "use strict";
-  var requestAnimationFrame = window.requestAnimationFrame ||
-                              window.mozRequestAnimationFrame ||
-                              window.webkitRequestAnimationFrame ||
-                              window.msRequestAnimationFrame;
-  window.requestAnimationFrame = requestAnimationFrame;
+  window.requestAnimationFrame =
+    window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
 })();
 
 function bouncyBallInit(){
   "use strict";
-  window.BouncyBall = {}
+  var BouncyBall = function(opts) {
+    this.x = opts.x == null ? 100 : opts.x;
+    this.y = opts.y == null ? 100 : opts.y;
+    this.vx = opt.vx == null ? 1 : opts.vx;
+    this.vy = opts.vy == null ? 1 : opts.vy;
+    this.radius = opts.radiu || 20;
+    this.color = opts.color || "#060";
+  }
   var canvas = document.getElementById('myCanvas'),
-    bouncyBall = {
-    x: 100,
-    y: 100,
-    vx: 1,
-    vy: 1,
-    radius: 20,
-    color: "#006660"
-  };
+    bouncyBall = new BouncyBall;
   // Drawing runs at the browser framerate.
-  window.requestAnimationFrame((function(time){
-    var ball = tickSimulation(bouncyBall, canvas)
+  requestAnimationFrame(function f(time){
+    requestAnimationFrame(f);
+    tickSimulation(bouncyBall, canvas)
     drawBall(ball, canvas);
-  }));
+  });
 }
 
 function tickSimulation(ball, canvas){
@@ -36,52 +37,44 @@ function tickSimulation(ball, canvas){
   var canvasWidth = canvas.width,
     canvasHeight = canvas.height;
 
-  // Check whether we're about to hit the edge. If so, bounce by reversing the vx
-  if (((ball.x - 20 + ball.vx) < 0) || ((ball.x + 20 + ball.vx) > canvasWidth)) {
+  // Check whether we're about to hit the edge. If so, bounce by reversing the velocity
+  if (ball.x - ball.radius + ball.vx) < 0) {
+    ball.x = -1 * (ball.x - ball.radius + ball.vx);
     ball.vx *= -1;
-  }
-
-  if (((ball.y - 20 + ball.vy) < 0) || ((ball.y + 20 + ball.vy) > canvasHeight)) {
+  } else if (ball.x + ball.radius + ball.vx) > canvasWidth) {
+    ball.x = canvasWidth - (ball.x + ball.radius + ball.vx - canvasWidth);
+    ball.vx *= -1;
+  } else if (ball.y - ball.radius + ball.vy) < 0) {
+    ball.y = -1 * (ball.y - ball.radius + ball.vy);
     ball.vy *= -1;
+  } else if (ball.y + ball.radius + ball.vy) > canvasHeight) {
+    ball.y = canvasHeight - (ball.y + ball.radius + ball.vy - canvasHeight);
+    ball.vy *= -1;
+  } else {
+    // Move by adding the vx and vy to the x and y
+    ball.x += ball.vx;
+    ball.y += ball.vy;
   }
-
-  // Move by adding the vx and vy to the x and y
-  ball.x += ball.vx;
-  ball.y += ball.vy;
-  return ball;
 }
 
 function drawBall(ball, canvas){
   "use strict";
-  window.requestAnimationFrame((function(time){
-    var simulatedBall = tickSimulation(ball, canvas);
-    drawBall(simulatedBall, canvas);
-  }));
   var context = canvas.getContext('2d');
   context.clearRect(0, 0, 800, 400);
   context.beginPath();
   context.fillStyle = ball.color;
   // Draw a circle of radius 20 at the coordinates 100, 100 on the canvas
-  context.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2, true);
+  context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
   context.closePath();
   context.fill();
 }
 
 // Load script when document is done loading:
-(function (){
-  "use strict";
-  if(window.addEventListener) {
-    window.addEventListener('load', function load(){
-      window.removeEventListener('load', load);
-      bouncyBallInit();
-    });
-  } else if(window.attachEvent) {
-    window.attachEvent('onload', function load(){
-      window.detachEvent('onload', load);
-      bouncyBallInit();
-    });
-  }
-})();
+if(window.addEventListener) {
+  addEventListener('load', bouncyBallInit);
+} else if(window.attachEvent) {
+  attachEvent('onload', bouncyBallInit);
+}
 </script>
 <title>Bounce Ball step 1, Javascript and HTML tutorial</title>
 <style>
