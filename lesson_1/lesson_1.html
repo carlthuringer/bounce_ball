@@ -14,27 +14,26 @@
 
 function bouncyBallInit(){
   "use strict";
-  window.BouncyBall = {};
-  window.BouncyBall.canvas = document.getElementById('myCanvas');
-  window.BouncyBall.ball = {
+  window.BouncyBall = {}
+  var canvas = document.getElementById('myCanvas'),
+    bouncyBall = {
     x: 100,
     y: 100,
     vx: 1,
     vy: 1,
     radius: 20,
     color: "#006660"
-  }; // That's x and y position, velocity x (vx) and velocity y (vy)
+  };
   // Drawing runs at the browser framerate.
-  window.requestAnimationFrame(draw);
-  // Simulation runs 1000 times per second
-  setInterval(tickSimulation, 1);
+  window.requestAnimationFrame((function(time){
+    var ball = tickSimulation(bouncyBall, canvas)
+    drawBall(ball, canvas);
+  }));
 }
 
-function tickSimulation(){
+function tickSimulation(ball, canvas){
   "use strict";
-  var canvas = window.BouncyBall.canvas,
-    ball = window.BouncyBall.ball,
-    canvasWidth = canvas.width,
+  var canvasWidth = canvas.width,
     canvasHeight = canvas.height;
 
   // Check whether we're about to hit the edge. If so, bounce by reversing the vx
@@ -49,13 +48,16 @@ function tickSimulation(){
   // Move by adding the vx and vy to the x and y
   ball.x += ball.vx;
   ball.y += ball.vy;
+  return ball;
 }
 
-function draw(time){
+function drawBall(ball, canvas){
   "use strict";
-  window.requestAnimationFrame(draw);
-  var context = window.BouncyBall.canvas.getContext('2d'),
-    ball = window.BouncyBall.ball;
+  window.requestAnimationFrame((function(time){
+    var simulatedBall = tickSimulation(ball, canvas);
+    drawBall(simulatedBall, canvas);
+  }));
+  var context = canvas.getContext('2d');
   context.clearRect(0, 0, 800, 400);
   context.beginPath();
   context.fillStyle = ball.color;
